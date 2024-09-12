@@ -1,0 +1,207 @@
+openapi: 3.0.3
+info:
+  title: Task Management API
+  description: >
+    API for managing tasks, including creating, retrieving, updating, and deleting tasks. 
+    This API supports operations to handle task data, such as name, description, status, 
+    and timestamps. It provides clear and intuitive paths for interacting with task resources.
+  version: 1.0.0
+servers:
+  - url: http://localhost:2000/
+    description: Local server
+
+tags:
+  - name: task
+    description: Everything about managing tasks
+
+paths:
+  /api/task:
+    get:
+      tags:
+        - task
+      summary: Get all tasks
+      description: Retrieve a list of all tasks.
+      responses:
+        '200':
+          description: Successfully retrieved tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - task
+      summary: Create a new task
+      description: Add a new task by providing `name` and `description`. Optionally, you can also provide `status`.
+      requestBody:
+        description: Task object that needs to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the task
+                  example: homeWork
+                description:
+                  type: string
+                  description: The description of the task
+                  example: you have to finish this task today
+                status:
+                  type: string
+                  description: The current status of the task
+                  example: pending
+              required:
+                - name
+                - description
+            example:
+              name: "homeWork"
+              description: "you have to finish this task today"
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+              example:
+                status: "success"
+                statusCode: 200
+                message: "task added successfully"
+                data: []
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                status: "error"
+                statusCode: 400
+                message: "Invalid input"
+
+  /api/task/:
+    put:
+      tags:
+        - task
+      summary: Update an existing task
+      description: Update an existing task by providing the task `id`, `name`, and `description` in the query parameters. All fields are optional except `id`, which is required.
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The ID of the task to update
+          example: 66e2887d70b7a51208bc2cfe
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: false
+          description: The new name of the task
+          example: Updated Task Name
+        - in: query
+          name: description
+          schema:
+            type: string
+          required: false
+          description: The new description of the task
+          example: Updated task description
+      responses:
+        '200':
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+              example:
+                status: "success"
+                statusCode: 200
+                message: "task updated successfully"
+                data: []
+        '400':
+          description: Invalid input or missing task ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                status: "error"
+                statusCode: 400
+                message: "Invalid input or missing task ID"
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                status: "error"
+                statusCode: 404
+                message: "Task not found"
+
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 66e2887d70b7a51208bc2cfe
+        name:
+          type: string
+          example: Complete project
+        description:
+          type: string
+          example: Finish the project by the end of the week
+        status:
+          type: string
+          example: pending
+        createdAt:
+          type: string
+          format: date-time
+          example: 2024-09-12T06:21:49.080Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2024-09-12T06:21:49.080Z
+
+    Response:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        statusCode:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: task added successfully
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        statusCode:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: Invalid input

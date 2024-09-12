@@ -4,14 +4,15 @@ const redis = require('redis')
 const express = require("express")
 const app = express()
 const routes = require("./routes/router")
-
+const cors = require('cors');
 const redisClient = redis.createClient({
     host: '127.0.0.1',
     port: 6379
   })
 redisClient.connect()
+app.use(cors()); 
 app.use(express.json())
-app.use(express.urlencoded())
+app.use(express.urlencoded({ extended: true }));
 app.use( (req, res, next) => {
     // redisClient.flushAll().then(()=>{
     //     console.log("all data delete"); 

@@ -1,6 +1,5 @@
 const { body, validationResult } = require('express-validator');
 
-// Define validation rules as an array
 const addTaskValidation = [
   body('name')
     .isString()
@@ -12,7 +11,6 @@ const addTaskValidation = [
     .withMessage('Description cannot be empty and must be a string')
 ];
 
-// Middleware to handle validation results
 const validateResult = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

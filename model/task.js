@@ -7,11 +7,6 @@ const task = mongoose.Schema({
     description:{
         type:String
     },
-    status:{
-        type:String,
-        enums:["pending","completed"],
-        default:"pending"
-    }
 },{ timestamps: true })
 
 module.exports = mongoose.model("task",task)

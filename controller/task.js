@@ -1,6 +1,6 @@
 const { json } = require("express")
 const Task =  require("../model/task")
-
+const { Types: { ObjectId } } = require('mongoose');
 exports.addTask = async(req,res)=>{
     let {name,description} = req.body
     let redisClient = req.redisClient
@@ -70,14 +70,38 @@ exports.getTaskList = async(req,res)=>{
         })
     }
 }
-
 exports.updateTask = async(req,res)=>{
     let {id,name,description} = req.query
     let redisClient = req.redisClient
     try{
+        if(!id || !ObjectId.isValid(id)){
+            return res.status(400).send({
+                status:"failed",
+                statusCode:400,
+                message:"id is required and must be in rigth format",
+                data:[]
+            })
+        }
 await redisClient.del(id)
-let task = await Task.findOneAndUpdate({_id:id},{name,description})
-
+let updatedTask = await Task.findOneAndUpdate(
+    { _id: id }, 
+    { name, description },
+    { new: true, runValidators: true }
+  );
+if(!updatedTask){
+    return res.status(400).send({
+        status:"failed",
+        statusCode:400,
+        message:"task not found to delete",
+        data:[]
+ })
+}
+res.status(200).send({
+    status:"success",
+    statusCode:200,
+    message:"task updated successfully",
+    data:[]
+})
     }
     catch(err){
         console.log(err);
