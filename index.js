@@ -5,6 +5,7 @@ const express = require("express")
 const app = express()
 const routes = require("./routes/router")
 const cors = require('cors');
+const port = process.env.PORT || 2000
 const redisClient = redis.createClient({
     host: '127.0.0.1',
     port: 6379
@@ -26,6 +27,6 @@ app.use( (req, res, next) => {
 app.use("/api",routes)
 
 
-app.listen(process.env.PORT,()=>{
-    console.log(`server start on port ${process.env.PORT} `);
+app.listen(port,()=>{
+    console.log(`server start on port ${port} `);
 })

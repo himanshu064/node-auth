@@ -5,7 +5,7 @@ let TaskController = require("../controller/task")
 
 
 router.post("/task",addTaskValidation,validateResult,TaskController.addTask)
-
+router.put("/task",TaskController.updateTask)
 router.get("/task",TaskController.getTaskList)
 
 
